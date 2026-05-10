@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"bufio"
 	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 
 	"golang.org/x/term"
@@ -35,7 +35,7 @@ func readPassword(confirm bool) (password string, err error) {
 	}
 	defer func() { err = term.Restore(fd, state) }()
 
-	fmt.Print("password > ")
+	fmt.Print("password: ")
 	passBytes, err := term.ReadPassword(fd)
 	if err != nil {
 		return "", err
@@ -50,7 +50,7 @@ func readPassword(confirm bool) (password string, err error) {
 	if confirm {
 		clearLine()
 
-		fmt.Print("confirm password > ")
+		fmt.Print("confirm: ")
 		confirmBytes, err := term.ReadPassword(fd)
 		if err != nil {
 			return "", err
@@ -66,15 +66,11 @@ func readPassword(confirm bool) (password string, err error) {
 	return password, nil
 }
 
-func readInput() string {
-	fmt.Println("ctrl+z for input")
-
-	in, err := io.ReadAll(os.Stdin)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(in)
+func readLine(prompt string) string {
+	fmt.Printf("%s: ", prompt)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	return scanner.Text()
 }
 
 func clearLine() {

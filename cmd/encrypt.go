@@ -8,7 +8,7 @@ import (
 )
 
 func Encrypt() {
-	value := strings.TrimSpace(readInput())
+	value := strings.TrimSpace(readLine("string"))
 
 	password, err := readPassword(true)
 	if err != nil {
