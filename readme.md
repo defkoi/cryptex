@@ -12,14 +12,3 @@
 | name | default  |
 | :--: | :------: |
 |  -f  | .cryptex |
-
-## .cryptex file
-
-```ts
-type Cryptex = {
-  string: string;
-  initial_vector: string;
-  salt: string;
-  iterations: number = 1_048_576;
-};
-```
