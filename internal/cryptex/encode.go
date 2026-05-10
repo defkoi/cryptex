@@ -48,9 +48,7 @@ func encrypt(data []byte, password string, salt []byte, iv []byte) error {
 		return err
 	}
 
-	blockMode := cipher.NewCBCEncrypter(block, iv)
-
-	blockMode.CryptBlocks(data, data)
+	cipher.NewCBCEncrypter(block, iv).CryptBlocks(data, data)
 
 	return nil
 }

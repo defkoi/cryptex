@@ -33,10 +33,8 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 	}
 
 	var dataMap map[string]string
-	if err := gob.NewDecoder(
-		bytes.NewReader(data),
-	).
-		Decode(&dataMap); err != nil {
+	if err := gob.NewDecoder(bytes.NewReader(data)).Decode(&dataMap); //
+	err != nil {
 		return nil, err
 	}
 
@@ -54,9 +52,7 @@ func decrypt(data []byte, password string, salt []byte, iv []byte) error {
 		return err
 	}
 
-	blockMode := cipher.NewCBCDecrypter(block, iv)
-
-	blockMode.CryptBlocks(data, data)
+	cipher.NewCBCDecrypter(block, iv).CryptBlocks(data, data)
 
 	return nil
 }
