@@ -12,10 +12,9 @@ func main() {
 		return
 	}
 
-	cmd.ParseFlags()
-
-	if cmd, ok := commands[os.Args[1]]; ok {
-		cmd()
+	if command, ok := commands[os.Args[1]]; ok {
+		cmd.ParseFlags(os.Args[2:])
+		command()
 	} else {
 		fmt.Printf("unknown command '%s'\n", os.Args[1])
 		showCommands()

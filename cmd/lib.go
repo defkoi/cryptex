@@ -11,8 +11,6 @@ import (
 )
 
 const (
-	defaultFile = ".cryptex"
-
 	defaultKey = ""
 )
 
@@ -20,11 +18,12 @@ var (
 	cryptexFile string
 )
 
-func ParseFlags() {
-	f := flag.String("f", defaultFile, "cryptex file")
-	flag.Parse()
+func ParseFlags(args []string) {
+	set := flag.NewFlagSet("main", flag.ContinueOnError)
 
-	cryptexFile = *f
+	set.StringVar(&cryptexFile, "f", ".cryptex", "cryptex file")
+
+	set.Parse(args)
 }
 
 func readPassword(confirm bool) (password string, err error) {
