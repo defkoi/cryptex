@@ -6,6 +6,12 @@ type Cryptex struct {
 	data map[string]string
 }
 
+func New() *Cryptex {
+	return &Cryptex{
+		data: make(map[string]string),
+	}
+}
+
 func (c *Cryptex) Store(k, v string) {
 	c.data[k] = v
 }

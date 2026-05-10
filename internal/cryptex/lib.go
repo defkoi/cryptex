@@ -2,6 +2,7 @@ package cryptex
 
 import (
 	"bytes"
+	"crypto/aes"
 	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha512"
@@ -22,16 +23,26 @@ func appendPadding(data []byte, blockSize int) []byte {
 }
 
 func removePadding(data []byte) ([]byte, error) {
-	if len(data) == 0 {
+	if len(data) < aes.BlockSize {
 		return nil, ErrInvalidPadding
 	}
 
-	remSize := int(data[len(data)-1])
-	if remSize > len(data) {
+	padSize := data[len(data)-1]
+	if padSize > aes.BlockSize {
 		return nil, ErrInvalidPadding
 	}
 
-	return data[:len(data)-remSize], nil
+	rem := len(data) - int(padSize)
+
+	noPad, pad := data[:rem], data[rem:]
+
+	for _, pad := range pad {
+		if pad != padSize {
+			return nil, ErrInvalidPadding
+		}
+	}
+
+	return noPad, nil
 }
 
 func generateRand(size int) []byte {

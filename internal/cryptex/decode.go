@@ -14,46 +14,49 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 		return nil, err
 	}
 
-	parsedEncData, err := decodeEncryptedData(encData)
+	decodedData, err := decodeEncryptedData(encData)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := parsedEncData.validate(); err != nil {
+	salt := decodedData.salt
+	iv := decodedData.iv
+	data := decodedData.data
+
+	if err := decrypt(data, password, salt, iv); err != nil {
 		return nil, err
 	}
-
-	_, salt, iv, data :=
-		parsedEncData.version,
-		parsedEncData.salt,
-		parsedEncData.iv,
-		parsedEncData.data
-
-	key, err := keyFromPassword(password, salt, iterations)
-	if err != nil {
-		return nil, err
-	}
-
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return nil, err
-	}
-
-	blockMode := cipher.NewCBCDecrypter(block, iv)
-
-	blockMode.CryptBlocks(data, data)
 
 	data, err = removePadding(data)
 	if err != nil {
 		return nil, err
 	}
 
-	dataMap := make(map[string]string)
+	var dataMap map[string]string
 	if err := gob.NewDecoder(
 		bytes.NewReader(data),
-	).Decode(&dataMap); err != nil {
+	).
+		Decode(&dataMap); err != nil {
 		return nil, err
 	}
 
 	return &Cryptex{data: dataMap}, nil
+}
+
+func decrypt(data []byte, password string, salt []byte, iv []byte) error {
+	key, err := keyFromPassword(password, salt, iterations)
+	if err != nil {
+		return err
+	}
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return err
+	}
+
+	blockMode := cipher.NewCBCDecrypter(block, iv)
+
+	blockMode.CryptBlocks(data, data)
+
+	return nil
 }

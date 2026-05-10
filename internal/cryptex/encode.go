@@ -10,7 +10,34 @@ import (
 
 func (c *Cryptex) Encode(w io.Writer, password string) error {
 	salt := generateRand(saltSize)
+	iv := generateRand(ivSize)
 
+	buf := bytes.NewBuffer([]byte{})
+	if err := gob.NewEncoder(buf).Encode(c.data); err != nil {
+		return err
+	}
+
+	data := appendPadding(buf.Bytes(), aes.BlockSize)
+
+	if err := encrypt(data, password, salt, iv); err != nil {
+		return err
+	}
+
+	encryptedData := encryptedData{
+		version: Version,
+		salt:    salt,
+		iv:      iv,
+		data:    data,
+	}
+
+	if _, err := w.Write(encryptedData.encode()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func encrypt(data []byte, password string, salt []byte, iv []byte) error {
 	key, err := keyFromPassword(password, salt, iterations)
 	if err != nil {
 		return err
@@ -21,30 +48,9 @@ func (c *Cryptex) Encode(w io.Writer, password string) error {
 		return err
 	}
 
-	iv := generateRand(ivSize)
-
 	blockMode := cipher.NewCBCEncrypter(block, iv)
 
-	buf := bytes.NewBuffer([]byte{})
-
-	if err := gob.NewEncoder(buf).Encode(c.data); err != nil {
-		return err
-	}
-
-	data := appendPadding(buf.Bytes(), aes.BlockSize)
-
 	blockMode.CryptBlocks(data, data)
-
-	encData := encryptedData{
-		version: Version,
-		salt:    salt,
-		iv:      iv,
-		data:    data,
-	}
-
-	if _, err := w.Write(encData.encode()); err != nil {
-		return err
-	}
 
 	return nil
 }
