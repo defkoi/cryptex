@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"cryptex/internal/cryptex"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -21,7 +22,11 @@ func Decrypt() {
 
 	c, err := cryptex.Decode(file, password)
 	if err != nil {
-		log.Fatal(err)
+		if errors.Is(err, cryptex.ErrInvalidPadding) {
+			log.Fatal("invalid password")
+		} else {
+			log.Fatal(err)
+		}
 	}
 
 	if c.Has(defaultKey) {
