@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"flag"
 	"fmt"
@@ -71,6 +72,33 @@ func readLine(prompt string) string {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	return scanner.Text()
+}
+
+func readUntilEnd(prompt string) string {
+	const (
+		endMark    = "\\end"
+		notEndMark = "\\\\end"
+	)
+
+	fmt.Println("enter using '\\end'")
+	fmt.Printf("%s: ", prompt)
+
+	scanner := bufio.NewScanner(os.Stdin)
+	buf := []byte{}
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		if bytes.HasSuffix(line, []byte(endMark)) {
+			if bytes.HasSuffix(line, []byte(notEndMark)) {
+				line = append(line[:len(line)-len(notEndMark)], endMark...)
+			} else {
+				buf = append(buf, line[:len(line)-len(endMark)]...)
+				break
+			}
+		}
+		buf = append(buf, append(line, '\n')...)
+	}
+
+	return string(buf)
 }
 
 func clearLine() {
