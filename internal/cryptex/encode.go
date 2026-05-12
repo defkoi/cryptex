@@ -1,10 +1,8 @@
 package cryptex
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"encoding/gob"
 	"io"
 )
 
@@ -12,13 +10,8 @@ func (c *Cryptex) Encode(w io.Writer, password string) error {
 	salt := generateRand(saltSize)
 	iv := generateRand(ivSize)
 
-	buf := bytes.NewBuffer([]byte{})
-	if err := gob.NewEncoder(buf).Encode(c.data); err != nil {
-		return err
-	}
-
-	data := appendPadding(buf.Bytes(), aes.BlockSize)
-
+	data := encodeMap(c.data)
+	data = appendPadding(data, aes.BlockSize)
 	if err := encrypt(data, password, salt, iv); err != nil {
 		return err
 	}

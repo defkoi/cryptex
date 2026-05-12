@@ -1,10 +1,8 @@
 package cryptex
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"encoding/gob"
 	"io"
 )
 
@@ -32,9 +30,8 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 		return nil, err
 	}
 
-	var dataMap map[string]string
-	if err := gob.NewDecoder(bytes.NewReader(data)).Decode(&dataMap); //
-	err != nil {
+	dataMap, err := decodeMap(data)
+	if err != nil {
 		return nil, err
 	}
 

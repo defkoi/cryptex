@@ -6,8 +6,25 @@ import (
 	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha512"
+	"encoding/gob"
 	"io"
 )
+
+func encodeMap(m map[string]string) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if err := gob.NewEncoder(buf).Encode(m); err != nil {
+		panic(err)
+	}
+	return buf.Bytes()
+}
+
+func decodeMap(data []byte) (map[string]string, error) {
+	var m map[string]string
+	if err := gob.NewDecoder(bytes.NewReader(data)).Decode(&m); err != nil {
+		return m, err
+	}
+	return m, nil
+}
 
 func keyFromPassword(password string, salt []byte, iter int) ([]byte, error) {
 	key, err := pbkdf2.Key(sha512.New, password, salt, iter, keySize)
