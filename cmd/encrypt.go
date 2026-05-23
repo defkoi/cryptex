@@ -15,7 +15,7 @@ func Encrypt() {
 		log.Fatal(err)
 	}
 
-	c := cryptex.New()
+	c := cryptex.New(iter)
 	c.Store(defaultKey, value)
 
 	file, err := os.Create(cryptexFile)

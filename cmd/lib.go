@@ -13,16 +13,20 @@ import (
 
 const (
 	defaultKey = ""
+
+	defaultIter = 600_000
 )
 
 var (
 	cryptexFile string
+	iter        uint
 )
 
 func ParseFlags(args []string) {
-	set := flag.NewFlagSet("main", flag.ContinueOnError)
+	set := flag.NewFlagSet("cryptex", flag.ExitOnError)
 
 	set.StringVar(&cryptexFile, "f", ".cryptex", "cryptex file")
+	set.UintVar(&iter, "iter", defaultIter, "iterations")
 
 	set.Parse(args)
 }

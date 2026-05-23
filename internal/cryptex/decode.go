@@ -17,11 +17,17 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 		return nil, err
 	}
 
+	iter := decodedData.iter
 	salt := decodedData.salt
 	iv := decodedData.iv
 	data := decodedData.data
 
-	if err := decrypt(data, password, salt, iv); err != nil {
+	key, err := keyFromPassword(password, salt, iter)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := decrypt(data, key, iv); err != nil {
 		return nil, err
 	}
 
@@ -35,15 +41,13 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 		return nil, err
 	}
 
-	return &Cryptex{data: dataMap}, nil
+	return &Cryptex{
+		data: dataMap,
+		iter: uint(iter),
+	}, nil
 }
 
-func decrypt(data []byte, password string, salt []byte, iv []byte) error {
-	key, err := keyFromPassword(password, salt, iterations)
-	if err != nil {
-		return err
-	}
-
+func decrypt(data []byte, key []byte, iv []byte) error {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return err

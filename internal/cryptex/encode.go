@@ -7,20 +7,28 @@ import (
 )
 
 func (c *Cryptex) Encode(w io.Writer, password string) error {
+	iter := uint32(c.iter)
 	salt := generateRand(saltSize)
 	iv := generateRand(ivSize)
 
 	data := encodeMap(c.data)
 	data = appendPadding(data, aes.BlockSize)
-	if err := encrypt(data, password, salt, iv); err != nil {
+
+	key, err := keyFromPassword(password, salt, iter)
+	if err != nil {
+		return err
+	}
+
+	if err := encrypt(data, key, iv); err != nil {
 		return err
 	}
 
 	encryptedData := encryptedData{
-		version: Version,
-		salt:    salt,
-		iv:      iv,
-		data:    data,
+		ver:  Version,
+		iter: iter,
+		salt: salt,
+		iv:   iv,
+		data: data,
 	}
 
 	if _, err := w.Write(encryptedData.encode()); err != nil {
@@ -30,12 +38,7 @@ func (c *Cryptex) Encode(w io.Writer, password string) error {
 	return nil
 }
 
-func encrypt(data []byte, password string, salt []byte, iv []byte) error {
-	key, err := keyFromPassword(password, salt, iterations)
-	if err != nil {
-		return err
-	}
-
+func encrypt(data []byte, key []byte, iv []byte) error {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return err

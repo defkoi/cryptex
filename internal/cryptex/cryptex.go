@@ -4,11 +4,15 @@ const Version = 0
 
 type Cryptex struct {
 	data map[string]string
+
+	/*! avoid type conversion (uint -> uint32 -> int) errors !*/
+	iter uint
 }
 
-func New() *Cryptex {
+func New(iter uint) *Cryptex {
 	return &Cryptex{
 		data: make(map[string]string),
+		iter: iter,
 	}
 }
 
