@@ -9,6 +9,7 @@
 
 ## flags
 
-| name | default  |
-| :--: | :------: |
-|  -f  | .cryptex |
+| name  | default  |
+| :---: | :------: |
+|  -f   | .cryptex |
+| -iter | 600_000  |
