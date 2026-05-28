@@ -26,7 +26,11 @@ func decodeMap(data []byte) (map[string]string, error) {
 	return m, nil
 }
 
-func keyFromPassword(password string, salt []byte, iter uint32) ([]byte, error) {
+func keyFromPassword(
+	password string,
+	salt []byte,
+	iter uint32,
+) ([]byte, error) {
 	key, err := pbkdf2.Key(sha256.New, password, salt, int(iter), keySize)
 	if err != nil {
 		return nil, err

@@ -43,7 +43,7 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 
 	return &Cryptex{
 		data: dataMap,
-		iter: uint(iter),
+		iter: iter,
 	}, nil
 }
 

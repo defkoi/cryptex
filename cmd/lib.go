@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"bytes"
+	"cryptex/internal/cryptex"
 	"errors"
 	"flag"
 	"fmt"
@@ -25,8 +26,19 @@ var (
 func ParseFlags(args []string) {
 	set := flag.NewFlagSet("cryptex", flag.ExitOnError)
 
-	set.StringVar(&cryptexFile, "f", ".cryptex", "cryptex file")
-	set.UintVar(&iter, "iter", defaultIter, "iterations")
+	set.StringVar(
+		&cryptexFile,
+		"f",
+		".cryptex",
+		"cryptex file",
+	)
+
+	set.UintVar(
+		&iter,
+		"iter",
+		defaultIter,
+		fmt.Sprintf("iterations (max %d)", cryptex.MaxIter),
+	)
 
 	set.Parse(args)
 }

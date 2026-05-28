@@ -7,14 +7,13 @@ import (
 )
 
 func (c *Cryptex) Encode(w io.Writer, password string) error {
-	iter := uint32(c.iter)
 	salt := generateRand(saltSize)
 	iv := generateRand(ivSize)
 
 	data := encodeMap(c.data)
 	data = appendPadding(data, aes.BlockSize)
 
-	key, err := keyFromPassword(password, salt, iter)
+	key, err := keyFromPassword(password, salt, c.iter)
 	if err != nil {
 		return err
 	}
@@ -25,7 +24,7 @@ func (c *Cryptex) Encode(w io.Writer, password string) error {
 
 	encryptedData := encryptedData{
 		ver:  Version,
-		iter: iter,
+		iter: c.iter,
 		salt: salt,
 		iv:   iv,
 		data: data,

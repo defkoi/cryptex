@@ -9,16 +9,16 @@ import (
 )
 
 func Decrypt() {
-	password, err := readPassword(false)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	file, err := os.Open(cryptexFile)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
+
+	password, err := readPassword(false)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	c, err := cryptex.Decode(file, password)
 	if err != nil {

@@ -1,6 +1,6 @@
 # string encryptor
 
-## using aes-cbc and pbkdf2-sha512
+## using aes-cbc and pbkdf2-sha256
 
 ## commands
 
