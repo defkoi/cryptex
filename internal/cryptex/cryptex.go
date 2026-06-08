@@ -22,7 +22,11 @@ func New(iter uint) (*Cryptex, error) {
 }
 
 func (c *Cryptex) Store(k, v string) {
-	c.data[k] = v
+	if v == "" {
+		delete(c.data, k)
+	} else {
+		c.data[k] = v
+	}
 }
 
 func (c *Cryptex) Load(k string) string {

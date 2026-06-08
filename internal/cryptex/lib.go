@@ -6,13 +6,13 @@ import (
 	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/gob"
+	"encoding/json"
 	"io"
 )
 
 func encodeMap(m map[string]string) []byte {
 	buf := bytes.NewBuffer([]byte{})
-	if err := gob.NewEncoder(buf).Encode(m); err != nil {
+	if err := json.NewEncoder(buf).Encode(m); err != nil {
 		panic(err)
 	}
 	return buf.Bytes()
@@ -20,7 +20,7 @@ func encodeMap(m map[string]string) []byte {
 
 func decodeMap(data []byte) (map[string]string, error) {
 	var m map[string]string
-	if err := gob.NewDecoder(bytes.NewReader(data)).Decode(&m); err != nil {
+	if err := json.NewDecoder(bytes.NewReader(data)).Decode(&m); err != nil {
 		return m, err
 	}
 	return m, nil

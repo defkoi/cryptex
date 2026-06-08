@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func Decrypt() {
@@ -20,6 +21,8 @@ func Decrypt() {
 		log.Fatal(err)
 	}
 
+	key := strings.TrimSpace(readLine("key"))
+
 	c, err := cryptex.Decode(file, password)
 	if err != nil {
 		if errors.Is(err, cryptex.ErrInvalidPadding) {
@@ -29,9 +32,9 @@ func Decrypt() {
 		}
 	}
 
-	if c.Has(defaultKey) {
-		fmt.Fprintf(os.Stdout, "%s\n", c.Load(defaultKey))
+	if c.Has(key) {
+		fmt.Fprintln(os.Stdout, c.Load(key))
 	} else {
-		fmt.Fprintf(os.Stderr, "empty\n")
+		fmt.Fprintln(os.Stderr, "empty")
 	}
 }
