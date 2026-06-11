@@ -21,7 +21,10 @@ func Get() {
 		fatal(err)
 	}
 
-	key := getKey()
+	key, err := getKey()
+	if err != nil {
+		fatal(err)
+	}
 
 	if c.Has(key) {
 		yellowColor.Fprintln(os.Stdout, c.Load(key))

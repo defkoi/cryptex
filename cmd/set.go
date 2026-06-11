@@ -26,7 +26,10 @@ func Set() {
 		fatal(err)
 	}
 
-	key := getKey()
+	key, err := getKey()
+	if err != nil {
+		fatal(err)
+	}
 
 	value := getString()
 
@@ -54,7 +57,10 @@ func encryptNew() {
 		fatal(err)
 	}
 
-	key := getKey()
+	key, err := getKey()
+	if err != nil {
+		fatal(err)
+	}
 
 	value := getString()
 

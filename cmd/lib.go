@@ -7,7 +7,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -171,11 +170,16 @@ func rewrite(file *os.File) error {
 	return nil
 }
 
-func getKey() string {
+func getKey() (string, error) {
+	var key string
 	if inputKey == "" {
-		return strings.TrimSpace(readLine("key"))
+		key = strings.TrimSpace(readLine("key"))
 	}
-	return inputKey
+	key = inputKey
+	if err := validateKey(key); err != nil {
+		return "", err
+	}
+	return key, nil
 }
 
 func getString() string {
@@ -204,5 +208,18 @@ func decode(f *os.File, p string) (*cryptex.Cryptex, error) {
 }
 
 func fatal(a any) {
-	log.Fatal(redColor.Sprint(a))
+	redColor.Println(a)
+	os.Exit(0)
+}
+
+func validateKey(key string) error {
+	buf := []byte(key)
+	for _, ch := range buf {
+		if !('0' <= ch && ch <= '9' ||
+			'a' <= ch && ch <= 'z' ||
+			ch == '.') {
+			return errors.New("invalid key format")
+		}
+	}
+	return nil
 }

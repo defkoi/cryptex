@@ -29,7 +29,10 @@ func Gen() {
 		fatal(err)
 	}
 
-	key := getKey()
+	key, err := getKey()
+	if err != nil {
+		fatal(err)
+	}
 
 	c.Store(key, value)
 
