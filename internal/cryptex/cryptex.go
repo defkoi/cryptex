@@ -1,6 +1,10 @@
 package cryptex
 
-import "fmt"
+import (
+	"fmt"
+	"iter"
+	"maps"
+)
 
 const Version = 0
 
@@ -36,4 +40,8 @@ func (c *Cryptex) Load(k string) string {
 func (c *Cryptex) Has(k string) bool {
 	_, ok := c.data[k]
 	return ok
+}
+
+func (c *Cryptex) Keys() iter.Seq[string] {
+	return maps.Keys(c.data)
 }

@@ -4,12 +4,18 @@
 
 ## commands
 
-- encrypt
-- decrypt
+- set
+- get
+- gen
+- keys
 
 ## flags
 
-| name  | default  |
-| :---: | :------: |
-|  -f   | .cryptex |
-| -iter | 600_000  |
+| name | default  |       hint        |
+| :--: | :------: | :---------------: |
+|  -f  | .cryptex |   cryptex file    |
+|  -k  |          |        key        |
+|  -s  |          |      string       |
+|  -p  |          |     password      |
+|  -i  | 600_000  |    interations    |
+|  -l  |    8     | generation length |

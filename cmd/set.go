@@ -2,73 +2,71 @@ package cmd
 
 import (
 	"cryptex/internal/cryptex"
-	"log"
 	"os"
-	"strings"
 )
 
-func Encrypt() {
+func Set() {
 	rFile, err := os.Open(cryptexFile)
 	if err != nil {
 		if os.IsNotExist(err) {
 			encryptNew()
 			return
 		}
-		log.Fatal(err)
+		fatal(err)
 	}
 	defer rFile.Close()
 
-	password, err := readPassword(false)
+	password, err := getPassword(false)
 	if err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 
-	c, err := cryptex.Decode(rFile, password)
+	c, err := decode(rFile, password)
 	if err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 
-	key := strings.TrimSpace(readLine("key"))
+	key := getKey()
 
-	value := strings.TrimSpace(readUntilEnd("string"))
+	value := getString()
 
 	c.Store(key, value)
 
 	wFile, err := os.Create(cryptexFile)
 	if err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 	defer wFile.Close()
 
 	if err := c.Encode(wFile, password); err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 }
 
 func encryptNew() {
 	c, err := cryptex.New(iter)
 	if err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 
-	password, err := readPassword(true)
+	password, err := getPassword(true)
 	if err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 
-	key := strings.TrimSpace(readLine("key"))
+	key := getKey()
 
-	value := strings.TrimSpace(readUntilEnd("string"))
+	value := getString()
 
 	c.Store(key, value)
 
 	file, err := os.Create(cryptexFile)
 	if err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 	defer file.Close()
 
 	if err := c.Encode(file, password); err != nil {
-		log.Fatal(err)
+		fatal(err)
 	}
 }

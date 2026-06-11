@@ -7,20 +7,32 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 
+	"github.com/fatih/color"
 	"golang.org/x/term"
 )
 
 const (
-	defaultKey = ""
-
-	defaultIter = 600_000
+	defaultIter   = 600_000
+	defaultGenLen = 8
 )
 
 var (
-	cryptexFile string
-	iter        uint
+	grayColor   = color.New(color.FgWhite, color.Faint)
+	yellowColor = color.New(color.FgYellow)
+	redColor    = color.New(color.FgRed)
+)
+
+var (
+	cryptexFile   string
+	inputKey      string
+	inputString   string
+	inputPassword string
+	iter          uint
+	genLen        int
 )
 
 func ParseFlags(args []string) {
@@ -33,11 +45,39 @@ func ParseFlags(args []string) {
 		"cryptex file",
 	)
 
+	set.StringVar(
+		&inputKey,
+		"k",
+		"",
+		"key",
+	)
+
+	set.StringVar(
+		&inputString,
+		"s",
+		"",
+		"string",
+	)
+
+	set.StringVar(
+		&inputPassword,
+		"p",
+		"",
+		"password",
+	)
+
 	set.UintVar(
 		&iter,
-		"iter",
+		"i",
 		defaultIter,
 		fmt.Sprintf("iterations (max %d)", cryptex.MaxIter),
+	)
+
+	set.IntVar(
+		&genLen,
+		"l",
+		defaultGenLen,
+		"generation length",
 	)
 
 	set.Parse(args)
@@ -129,4 +169,40 @@ func rewrite(file *os.File) error {
 		return err
 	}
 	return nil
+}
+
+func getKey() string {
+	if inputKey == "" {
+		return strings.TrimSpace(readLine("key"))
+	}
+	return inputKey
+}
+
+func getString() string {
+	if inputString == "" {
+		return strings.TrimSpace(readUntilEnd("string"))
+	}
+	return inputString
+}
+
+func getPassword(confirm bool) (string, error) {
+	if inputPassword == "" {
+		return readPassword(confirm)
+	}
+	return inputPassword, nil
+}
+
+func decode(f *os.File, p string) (*cryptex.Cryptex, error) {
+	c, err := cryptex.Decode(f, p)
+	if err != nil {
+		if errors.Is(err, cryptex.ErrInvalidPadding) {
+			return nil, errors.New("invalid password")
+		}
+		return nil, err
+	}
+	return c, nil
+}
+
+func fatal(a any) {
+	log.Fatal(redColor.Sprint(a))
 }

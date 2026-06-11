@@ -22,8 +22,10 @@ func main() {
 }
 
 var commands = map[string]func(){
-	"encrypt": cmd.Encrypt,
-	"decrypt": cmd.Decrypt,
+	"set":  cmd.Set,
+	"get":  cmd.Get,
+	"gen":  cmd.Gen,
+	"keys": cmd.Keys,
 }
 
 func showUsage() {
@@ -36,6 +38,8 @@ func showUsage() {
 func showCommands() {
 	fmt.Println("commands:")
 
-	fmt.Println("\tencrypt")
-	fmt.Println("\tdecrypt")
+	fmt.Println("\tset")
+	fmt.Println("\tget")
+	fmt.Println("\tgen")
+	fmt.Println("\tkeys")
 }
