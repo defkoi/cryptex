@@ -174,11 +174,14 @@ func getKey() (string, error) {
 	var key string
 	if inputKey == "" {
 		key = strings.TrimSpace(readLine("key"))
+	} else {
+		key = inputKey
 	}
-	key = inputKey
+
 	if err := validateKey(key); err != nil {
 		return "", err
 	}
+
 	return key, nil
 }
 
