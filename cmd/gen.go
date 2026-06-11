@@ -8,11 +8,10 @@ import (
 )
 
 func Gen() {
-	rFile, err := os.Open(cryptexFile)
+	r, err := openAndSaveBackup(cryptexFile)
 	if err != nil {
 		fatal(err)
 	}
-	defer rFile.Close()
 
 	value, err := passgen.GeneratePassword(genLen)
 	if err != nil {
@@ -24,7 +23,7 @@ func Gen() {
 		fatal(err)
 	}
 
-	c, err := decode(rFile, password)
+	c, err := decode(r, password)
 	if err != nil {
 		fatal(err)
 	}

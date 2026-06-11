@@ -7,7 +7,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/fatih/color"
@@ -218,8 +220,8 @@ func getMode() (cryptex.Mode, error) {
 	}
 }
 
-func decode(f *os.File, p string) (*cryptex.Cryptex, error) {
-	c, err := cryptex.Decode(f, p)
+func decode(r io.Reader, p string) (*cryptex.Cryptex, error) {
+	c, err := cryptex.Decode(r, p)
 	if err != nil {
 		if errors.Is(err, cryptex.ErrInvalidPadding) {
 			return nil, errors.New("invalid password")
@@ -244,4 +246,41 @@ func validateKey(key string) error {
 		}
 	}
 	return nil
+}
+
+func openAndSaveBackup(filepath string) (io.Reader, error) {
+	rFile, err := os.Open(filepath)
+	if err != nil {
+		return nil, err
+	}
+	defer rFile.Close()
+
+	data, err := io.ReadAll(rFile)
+	if err != nil {
+		return nil, err
+	}
+
+	wFile, err := os.Create(addSuffix(filepath, "backup"))
+	if err != nil {
+		return nil, err
+	}
+	defer wFile.Close()
+
+	if _, err := wFile.Write(data); err != nil {
+		return nil, err
+	}
+
+	cp := make([]byte, len(data))
+	copy(cp, data)
+	return bytes.NewReader(cp), nil
+}
+
+func addSuffix(p string, suffix string) string {
+	dir := path.Dir(p)
+	ext := path.Ext(p)
+	name, _ := strings.CutSuffix(path.Base(p), ext)
+	if name != "" && !strings.HasSuffix(name, "_") {
+		name += "_"
+	}
+	return path.Join(dir, name+suffix+ext)
 }

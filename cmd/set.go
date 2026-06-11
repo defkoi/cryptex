@@ -6,7 +6,7 @@ import (
 )
 
 func Set() {
-	rFile, err := os.Open(cryptexFile)
+	r, err := openAndSaveBackup(cryptexFile)
 	if err != nil {
 		if os.IsNotExist(err) {
 			encryptNew()
@@ -14,14 +14,13 @@ func Set() {
 		}
 		fatal(err)
 	}
-	defer rFile.Close()
 
 	password, err := getPassword(false)
 	if err != nil {
 		fatal(err)
 	}
 
-	c, err := decode(rFile, password)
+	c, err := decode(r, password)
 	if err != nil {
 		fatal(err)
 	}
