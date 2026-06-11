@@ -19,3 +19,4 @@
 |  -p  |          |     password      |
 |  -i  | 600_000  |    interations    |
 |  -l  |    8     | generation length |
+|  -m  |   cbc    |       mode        |

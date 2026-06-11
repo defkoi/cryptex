@@ -3,6 +3,7 @@ package cryptex
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"errors"
 	"io"
 )
 
@@ -18,12 +19,13 @@ func (c *Cryptex) Encode(w io.Writer, password string) error {
 		return err
 	}
 
-	if err := encrypt(data, key, iv); err != nil {
+	data, err = encrypt(data, key, iv, c.mode)
+	if err != nil {
 		return err
 	}
 
 	encryptedData := encryptedData{
-		ver:  Version,
+		mode: c.mode,
 		iter: c.iter,
 		salt: salt,
 		iv:   iv,
@@ -37,13 +39,25 @@ func (c *Cryptex) Encode(w io.Writer, password string) error {
 	return nil
 }
 
-func encrypt(data []byte, key []byte, iv []byte) error {
+func encrypt(data []byte, key []byte, iv []byte, mode Mode) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	cipher.NewCBCEncrypter(block, iv).CryptBlocks(data, data)
-
-	return nil
+	switch mode {
+	case ModeCBC:
+		ret := make([]byte, len(data))
+		cipher.NewCBCEncrypter(block, iv).CryptBlocks(ret, data)
+		return ret, nil
+	case ModeGCM:
+		gcm, err := cipher.NewGCM(block)
+		if err != nil {
+			return nil, err
+		}
+		nonce := iv[:gcm.NonceSize()]
+		return gcm.Seal(nil, nonce, data, nil), nil
+	default:
+		return nil, errors.New("unsupported mode")
+	}
 }

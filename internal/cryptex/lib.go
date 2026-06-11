@@ -3,12 +3,36 @@ package cryptex
 import (
 	"bytes"
 	"crypto/aes"
+	"crypto/cipher"
 	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
 	"io"
 )
+
+type Mode uint8
+
+const (
+	ModeCBC Mode = iota
+	ModeGCM
+)
+
+func init() {
+	block, err := aes.NewCipher(make([]byte, keySize))
+	if err != nil {
+		panic(err)
+	}
+
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		panic(err)
+	}
+
+	if gcm.NonceSize() > ivSize {
+		panic("gcm: nonce > iv")
+	}
+}
 
 func encodeMap(m map[string]string) []byte {
 	buf := bytes.NewBuffer([]byte{})

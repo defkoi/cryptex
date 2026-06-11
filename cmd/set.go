@@ -47,7 +47,12 @@ func Set() {
 }
 
 func encryptNew() {
-	c, err := cryptex.New(iter)
+	mode, err := getMode()
+	if err != nil {
+		fatal(err)
+	}
+
+	c, err := cryptex.New(iter, mode)
 	if err != nil {
 		fatal(err)
 	}
