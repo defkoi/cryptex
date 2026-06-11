@@ -28,6 +28,11 @@ var (
 )
 
 var (
+	errPasswordsMismatch  = errors.New("passwords mismatch")
+	errNoPasswordProvided = errors.New("no password provided")
+)
+
+var (
 	cryptexFile   string
 	inputKey      string
 	inputString   string
@@ -99,16 +104,23 @@ func readPassword(confirm bool) (password string, err error) {
 	if err != nil {
 		return "", err
 	}
-	defer func() { err = term.Restore(fd, state) }()
+	defer func() {
+		if err != nil {
+			term.Restore(fd, state)
+		} else {
+			err = term.Restore(fd, state)
+		}
+	}()
 
 	fmt.Print("password: ")
+	defer clearLine()
 	passBytes, err := term.ReadPassword(fd)
 	if err != nil {
 		return "", err
 	}
 
 	if len(passBytes) == 0 {
-		return "", errors.New("no password provided")
+		return "", errNoPasswordProvided
 	}
 
 	password = string(passBytes)
@@ -123,11 +135,9 @@ func readPassword(confirm bool) (password string, err error) {
 		}
 
 		if password != string(confirmBytes) {
-			return "", errors.New("passwords don't match")
+			return "", errPasswordsMismatch
 		}
 	}
-
-	clearLine()
 
 	return password, nil
 }
@@ -204,7 +214,8 @@ func getString() string {
 
 func getPassword(confirm bool) (string, error) {
 	if inputPassword == "" {
-		return readPassword(confirm)
+		p, err := readPassword(confirm)
+		return p, err
 	}
 	return inputPassword, nil
 }
@@ -283,4 +294,33 @@ func addSuffix(p string, suffix string) string {
 		name += "_"
 	}
 	return path.Join(dir, name+suffix+ext)
+}
+
+func createCryptex() (*cryptex.Cryptex, error) {
+	mode, err := getMode()
+	if err != nil {
+		return nil, err
+	}
+
+	c, err := cryptex.New(iter, mode)
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
+func getPasswordWithRetry() (string, error) {
+	for {
+		password, err := getPassword(true)
+		if err != nil {
+			if errors.Is(err, errNoPasswordProvided) ||
+				errors.Is(err, errPasswordsMismatch) {
+				fmt.Printf("%v: retry: ", err)
+				continue
+			}
+			return "", err
+		}
+		return password, nil
+	}
 }

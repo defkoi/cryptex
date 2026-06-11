@@ -16,30 +16,31 @@ func main() {
 		cmd.ParseFlags(os.Args[2:])
 		command()
 	} else {
-		fmt.Printf("unknown command '%s'\n", os.Args[1])
+		fmt.Printf("unknown command '%s'\n\n", os.Args[1])
 		showCommands()
 	}
 }
 
 var commands = map[string]func(){
-	"set":  cmd.Set,
-	"get":  cmd.Get,
-	"gen":  cmd.Gen,
-	"keys": cmd.Keys,
+	"create": cmd.Create,
+	"set":    cmd.Set,
+	"gen":    cmd.Gen,
+	"get":    cmd.Get,
+	"keys":   cmd.Keys,
 }
 
 func showUsage() {
 	fmt.Println("cryptex [command] [...flags]")
 	fmt.Println()
-
 	showCommands()
 }
 
 func showCommands() {
 	fmt.Println("commands:")
 
+	fmt.Println("\tcreate")
 	fmt.Println("\tset")
-	fmt.Println("\tget")
 	fmt.Println("\tgen")
+	fmt.Println("\tget")
 	fmt.Println("\tkeys")
 }

@@ -4,9 +4,10 @@
 
 ## commands
 
+- create
 - set
-- get
 - gen
+- get
 - keys
 
 ## flags

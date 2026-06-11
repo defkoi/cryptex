@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"cryptex/internal/cryptex"
 	"os"
 )
 
@@ -9,7 +8,7 @@ func Set() {
 	r, err := openAndSaveBackup(cryptexFile)
 	if err != nil {
 		if os.IsNotExist(err) {
-			encryptNew()
+			setNew()
 			return
 		}
 		fatal(err)
@@ -45,18 +44,8 @@ func Set() {
 	}
 }
 
-func encryptNew() {
-	mode, err := getMode()
-	if err != nil {
-		fatal(err)
-	}
-
-	c, err := cryptex.New(iter, mode)
-	if err != nil {
-		fatal(err)
-	}
-
-	password, err := getPassword(true)
+func setNew() {
+	c, err := createCryptex()
 	if err != nil {
 		fatal(err)
 	}
@@ -75,6 +64,11 @@ func encryptNew() {
 		fatal(err)
 	}
 	defer file.Close()
+
+	password, err := getPasswordWithRetry()
+	if err != nil {
+		fatal(err)
+	}
 
 	if err := c.Encode(file, password); err != nil {
 		fatal(err)
