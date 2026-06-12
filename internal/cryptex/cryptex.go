@@ -8,21 +8,27 @@ import (
 
 type Cryptex struct {
 	data map[string]string
-
 	iter uint32
-	mode Mode
 }
 
-func New(iter uint, mode Mode) (*Cryptex, error) {
-	if iter > MaxIter {
-		return nil, fmt.Errorf("too much iterations (max %d)", MaxIter)
+func New(iter uint) (*Cryptex, error) {
+	c := &Cryptex{data: make(map[string]string)}
+
+	if err := c.SetIter(iter); err != nil {
+		return nil, err
 	}
 
-	return &Cryptex{
-		data: make(map[string]string),
-		iter: uint32(iter),
-		mode: ModeGCM,
-	}, nil
+	return c, nil
+}
+
+func (c *Cryptex) SetIter(iter uint) error {
+	if iter > MaxIter {
+		return fmt.Errorf("too much iterations (max %d)", MaxIter)
+	}
+
+	c.iter = uint32(iter)
+
+	return nil
 }
 
 func (c *Cryptex) Store(k, v string) {

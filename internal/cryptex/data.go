@@ -2,47 +2,58 @@ package cryptex
 
 import (
 	"crypto/aes"
+	"crypto/cipher"
 	"encoding/binary"
-	"fmt"
 )
 
-const (
-	encryptedDataHeaderSize = 1 + 4 + saltSize + ivSize
-)
+const encryptedDataHeaderSize = iterSize + metaSize + saltSize
+
+var overhead int
+
+func init() {
+	block, err := aes.NewCipher(make([]byte, keySize))
+	if err != nil {
+		panic(err)
+	}
+
+	gcm, err := cipher.NewGCMWithRandomNonce(block)
+	if err != nil {
+		panic(err)
+	}
+
+	overhead = gcm.Overhead()
+}
 
 type encryptedData struct {
-	mode Mode
+	// header
 	iter uint32
+	meta []byte // unused
 	salt []byte
-	iv   []byte
-	data []byte
+
+	// data
+	data []byte // include nonce
 }
 
 func decodeEncryptedData(data []byte) (encryptedData, error) {
-	const minSize = encryptedDataHeaderSize + aes.BlockSize
-
-	if len(data) < minSize ||
-		(len(data)-encryptedDataHeaderSize)%aes.BlockSize != 0 {
-		fmt.Println(len(data))
+	if len(data) < encryptedDataHeaderSize+aes.BlockSize+overhead ||
+		(len(data)-encryptedDataHeaderSize-overhead)%aes.BlockSize != 0 {
 		return encryptedData{}, ErrInvalidSize
 	}
 
 	return encryptedData{
-		mode: Mode(data[0]),
-		iter: binary.LittleEndian.Uint32(data[1:5]),
-		salt: data[5 : 5+saltSize],
-		iv:   data[5+saltSize : 5+saltSize+ivSize],
-		data: data[5+saltSize+ivSize:],
+		iter: binary.LittleEndian.Uint32(data[:iterSize]),
+		meta: data[iterSize : iterSize+metaSize],
+		salt: data[iterSize+metaSize : iterSize+metaSize+saltSize],
+		data: data[iterSize+metaSize+saltSize:],
 	}, nil
 }
 
 func (d *encryptedData) encode() []byte {
 	b := make([]byte, 0, encryptedDataHeaderSize+len(d.data))
 
-	b = append(b, uint8(d.mode))
 	b = binary.LittleEndian.AppendUint32(b, d.iter)
-	b = append(b, d.salt...)
-	b = append(b, d.iv...)
+	b = append(b, d.meta[:metaSize]...)
+	b = append(b, d.salt[:saltSize]...)
 	b = append(b, d.data...)
 
 	return b

@@ -39,7 +39,6 @@ var (
 	inputPassword string
 	iter          uint
 	genLen        int
-	mode          string
 )
 
 func ParseFlags(args []string) {
@@ -85,13 +84,6 @@ func ParseFlags(args []string) {
 		"l",
 		defaultGenLen,
 		"generation length",
-	)
-
-	set.StringVar(
-		&mode,
-		"m",
-		"cbc",
-		"mode",
 	)
 
 	set.Parse(args)
@@ -220,23 +212,9 @@ func getPassword(confirm bool) (string, error) {
 	return inputPassword, nil
 }
 
-func getMode() (cryptex.Mode, error) {
-	switch strings.ToLower(mode) {
-	case "cbc":
-		return cryptex.ModeCBC, nil
-	case "gcm":
-		return cryptex.ModeGCM, nil
-	default:
-		return 0, errors.New("unsupported mode")
-	}
-}
-
 func decode(r io.Reader, p string) (*cryptex.Cryptex, error) {
 	c, err := cryptex.Decode(r, p)
 	if err != nil {
-		if errors.Is(err, cryptex.ErrInvalidPadding) {
-			return nil, errors.New("invalid password")
-		}
 		return nil, err
 	}
 	return c, nil
@@ -297,12 +275,7 @@ func addSuffix(p string, suffix string) string {
 }
 
 func createCryptex() (*cryptex.Cryptex, error) {
-	mode, err := getMode()
-	if err != nil {
-		return nil, err
-	}
-
-	c, err := cryptex.New(iter, mode)
+	c, err := cryptex.New(iter)
 	if err != nil {
 		return nil, err
 	}

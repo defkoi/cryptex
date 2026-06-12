@@ -3,24 +3,23 @@ package cryptex
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	"errors"
 	"io"
 )
 
 func Decode(r io.Reader, password string) (*Cryptex, error) {
-	encData, err := io.ReadAll(r)
-	if err != nil {
-		return nil, err
-	}
-	decodedData, err := decodeEncryptedData(encData)
+	readed, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
 
-	mode := decodedData.mode
+	decodedData, err := decodeEncryptedData(readed)
+	if err != nil {
+		return nil, err
+	}
+
 	iter := decodedData.iter
+	_ = decodedData.meta
 	salt := decodedData.salt
-	iv := decodedData.iv
 	data := decodedData.data
 
 	key, err := keyFromPassword(password, salt, iter)
@@ -28,7 +27,7 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 		return nil, err
 	}
 
-	data, err = decrypt(data, key, iv, mode)
+	data, err = decrypt(data, key)
 	if err != nil {
 		return nil, err
 	}
@@ -46,29 +45,19 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 	return &Cryptex{
 		data: dataMap,
 		iter: iter,
-		mode: mode,
 	}, nil
 }
 
-func decrypt(data []byte, key []byte, iv []byte, mode Mode) ([]byte, error) {
+func decrypt(data []byte, key []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
 
-	switch mode {
-	case ModeCBC:
-		ret := make([]byte, len(data))
-		cipher.NewCBCDecrypter(block, iv).CryptBlocks(ret, data)
-		return ret, nil
-	case ModeGCM:
-		gcm, err := cipher.NewGCM(block)
-		if err != nil {
-			return nil, err
-		}
-		nonce := iv[:gcm.NonceSize()]
-		return gcm.Open(nil, nonce, data, nil)
-	default:
-		return nil, errors.New("unsupported mode")
+	gcm, err := cipher.NewGCMWithRandomNonce(block)
+	if err != nil {
+		return nil, err
 	}
+
+	return gcm.Open(nil, nil, data, nil)
 }
