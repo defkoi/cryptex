@@ -9,6 +9,7 @@
 - gen
 - get
 - keys
+- del
 
 ## flags
 
@@ -18,5 +19,5 @@
 |  -k  |          |        key        |
 |  -s  |          |      string       |
 |  -p  |          |     password      |
-|  -i  | 600_000  |    interations    |
+|  -i  | 600_000  |    iterations     |
 |  -l  |    8     | generation length |

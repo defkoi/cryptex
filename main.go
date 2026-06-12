@@ -27,6 +27,7 @@ var commands = map[string]func(){
 	"gen":    cmd.Gen,
 	"get":    cmd.Get,
 	"keys":   cmd.Keys,
+	"del":    cmd.Del,
 }
 
 func showUsage() {
@@ -43,4 +44,5 @@ func showCommands() {
 	fmt.Println("\tgen")
 	fmt.Println("\tget")
 	fmt.Println("\tkeys")
+	fmt.Println("\tdel")
 }

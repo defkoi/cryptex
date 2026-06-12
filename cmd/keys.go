@@ -21,7 +21,13 @@ func Keys() {
 		fatal(err)
 	}
 
+	isEmpty := true
 	for k := range c.Keys() {
+		isEmpty = false
 		yellowColor.Fprintln(os.Stdout, k)
+	}
+
+	if isEmpty {
+		grayColor.Fprintln(os.Stdout, "empty")
 	}
 }

@@ -226,14 +226,19 @@ func fatal(a any) {
 }
 
 func validateKey(key string) error {
-	buf := []byte(key)
-	for _, ch := range buf {
-		if !('0' <= ch && ch <= '9' ||
-			'a' <= ch && ch <= 'z' ||
-			ch == '.') {
+	if key == "" {
+		return errors.New("empty key")
+	}
+
+	var prev byte
+	for _, ch := range []byte(key) {
+		if !('a' <= ch && ch <= 'z' ||
+			ch == '.' && prev != '.') {
 			return errors.New("invalid key format")
 		}
+		prev = ch
 	}
+
 	return nil
 }
 
