@@ -8,7 +8,7 @@ import (
 
 const encryptedDataHeaderSize = iterSize + metaSize + saltSize
 
-var overhead int
+var overheadSize int // include nonce
 
 func init() {
 	block, err := aes.NewCipher(make([]byte, keySize))
@@ -21,7 +21,7 @@ func init() {
 		panic(err)
 	}
 
-	overhead = gcm.Overhead()
+	overheadSize = gcm.Overhead()
 }
 
 type encryptedData struct {
@@ -35,8 +35,7 @@ type encryptedData struct {
 }
 
 func decodeEncryptedData(data []byte) (encryptedData, error) {
-	if len(data) < encryptedDataHeaderSize+aes.BlockSize+overhead ||
-		(len(data)-encryptedDataHeaderSize-overhead)%aes.BlockSize != 0 {
+	if len(data) < encryptedDataHeaderSize+overheadSize {
 		return encryptedData{}, ErrInvalidSize
 	}
 

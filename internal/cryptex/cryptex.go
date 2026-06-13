@@ -31,6 +31,10 @@ func (c *Cryptex) SetIter(iter uint) error {
 	return nil
 }
 
+func (c *Cryptex) Iter() uint {
+	return uint(c.iter)
+}
+
 func (c *Cryptex) Store(k, v string) {
 	if v == "" {
 		delete(c.data, k)

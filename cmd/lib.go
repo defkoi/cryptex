@@ -42,7 +42,7 @@ var (
 	genCharSet    string
 )
 
-func ParseFlags(args []string) {
+func parseFlags(args []string) {
 	set := flag.NewFlagSet("cryptex", flag.ExitOnError)
 
 	set.StringVar(
@@ -233,6 +233,11 @@ func fatal(a any) {
 	os.Exit(0)
 }
 
+func fatalf(format string, a ...any) {
+	redColor.Printf(format, a...)
+	os.Exit(0)
+}
+
 func validateKey(key string) error {
 	if key == "" {
 		return errors.New("empty key")
@@ -309,4 +314,14 @@ func getPasswordWithRetry() (string, error) {
 		}
 		return password, nil
 	}
+}
+
+func getNewPasswordWithRetry() (string, error) {
+	/* prevent use of flag */
+	recoverInputPassword := inputPassword
+	defer func() { inputPassword = recoverInputPassword }()
+	inputPassword = ""
+
+	fmt.Print("new ")
+	return getNewPasswordWithRetry()
 }

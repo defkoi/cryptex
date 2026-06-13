@@ -6,10 +6,11 @@
 
 - create
 - set
-- gen
+- generate
 - get
 - keys
-- del
+- delete
+- change \[password|iterations\]
 
 ## flags
 

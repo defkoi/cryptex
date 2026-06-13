@@ -32,11 +32,6 @@ func Decode(r io.Reader, password string) (*Cryptex, error) {
 		return nil, err
 	}
 
-	data, err = removePadding(data)
-	if err != nil {
-		return nil, err
-	}
-
 	dataMap, err := decodeMap(data)
 	if err != nil {
 		return nil, err

@@ -11,8 +11,6 @@ func (c *Cryptex) Encode(w io.Writer, password string) error {
 
 	data := encodeMap(c.data)
 
-	data = appendPadding(data, aes.BlockSize)
-
 	key, err := keyFromPassword(password, salt, c.iter)
 	if err != nil {
 		return err

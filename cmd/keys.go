@@ -4,7 +4,9 @@ import (
 	"os"
 )
 
-func Keys() {
+func Keys(args []string) {
+	parseFlags(args)
+
 	file, err := os.Open(cryptexFile)
 	if err != nil {
 		fatal(err)
@@ -24,10 +26,10 @@ func Keys() {
 	isEmpty := true
 	for k := range c.Keys() {
 		isEmpty = false
-		yellowColor.Fprintln(os.Stdout, k)
+		yellowColor.Println(k)
 	}
 
 	if isEmpty {
-		grayColor.Fprintln(os.Stdout, "empty")
+		grayColor.Println("empty")
 	}
 }

@@ -4,7 +4,9 @@ import (
 	"os"
 )
 
-func Create() {
+func Create(args []string) {
+	parseFlags(args)
+
 	c, err := createCryptex()
 	if err != nil {
 		fatal(err)

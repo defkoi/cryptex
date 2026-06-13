@@ -4,5 +4,5 @@ import "errors"
 
 var (
 	ErrInvalidSize    = errors.New("invalid size")
-	ErrInvalidPadding = errors.New("invalid padding")
+	ErrInvalidPadding = errors.New("invalid padding") // unused
 )

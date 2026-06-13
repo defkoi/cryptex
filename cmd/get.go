@@ -4,7 +4,9 @@ import (
 	"os"
 )
 
-func Get() {
+func Get(args []string) {
+	parseFlags(args)
+
 	file, err := os.Open(cryptexFile)
 	if err != nil {
 		fatal(err)
@@ -27,9 +29,8 @@ func Get() {
 	}
 
 	if c.Has(key) {
-		yellowColor.Fprintln(os.Stdout, c.Load(key))
+		yellowColor.Println(c.Load(key))
 	} else {
-		// fmt.Fprintln(os.Stderr, "empty")
-		grayColor.Fprintln(os.Stdout, "empty")
+		grayColor.Println("empty")
 	}
 }

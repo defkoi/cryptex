@@ -4,7 +4,9 @@ import (
 	"os"
 )
 
-func Set() {
+func Set(args []string) {
+	parseFlags(args)
+
 	r, err := openAndSaveBackup(cryptexFile)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -33,13 +35,13 @@ func Set() {
 
 	c.Store(key, value)
 
-	wFile, err := os.Create(cryptexFile)
+	file, err := os.Create(cryptexFile)
 	if err != nil {
 		fatal(err)
 	}
-	defer wFile.Close()
+	defer file.Close()
 
-	if err := c.Encode(wFile, password); err != nil {
+	if err := c.Encode(file, password); err != nil {
 		fatal(err)
 	}
 }

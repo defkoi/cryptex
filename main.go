@@ -13,21 +13,21 @@ func main() {
 	}
 
 	if command, ok := commands[os.Args[1]]; ok {
-		cmd.ParseFlags(os.Args[2:])
-		command()
+		command(os.Args[2:])
 	} else {
 		fmt.Printf("unknown command '%s'\n\n", os.Args[1])
 		showCommands()
 	}
 }
 
-var commands = map[string]func(){
-	"create": cmd.Create,
-	"set":    cmd.Set,
-	"gen":    cmd.Gen,
-	"get":    cmd.Get,
-	"keys":   cmd.Keys,
-	"del":    cmd.Del,
+var commands = map[string]func([]string){
+	"create":   cmd.Create,
+	"set":      cmd.Set,
+	"generate": cmd.Generate,
+	"get":      cmd.Get,
+	"keys":     cmd.Keys,
+	"delete":   cmd.Delete,
+	"change":   cmd.Change,
 }
 
 func showUsage() {
@@ -41,8 +41,9 @@ func showCommands() {
 
 	fmt.Println("\tcreate")
 	fmt.Println("\tset")
-	fmt.Println("\tgen")
+	fmt.Println("\tgenerate")
 	fmt.Println("\tget")
 	fmt.Println("\tkeys")
-	fmt.Println("\tdel")
+	fmt.Println("\tdelete")
+	fmt.Println("\tchange [password|iterations]")
 }
