@@ -23,3 +23,13 @@
 |  -i  | 600_000  |         iterations          |
 |  -l  |    8     |      generation length      |
 | -cm  |   ludo   | generation charset modifier |
+
+## examples
+
+```shell
+cryptex create -f my_cryptex -i 2100000
+cryptex generate -f my_cryptex -k name.secret -p superPassword123 -l 12 -cm ldo
+cryptex keys -f my_cryptex
+cryptex get -f my_cryptex -k name.secret -p superPassword123 >> secret.txt
+cryptex change iterations -f my_cryptex -i 4200000
+```
