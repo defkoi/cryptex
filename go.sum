@@ -1,7 +1,11 @@
 github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
 github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-github.com/defkoi/passgen v0.0.0-20260609202850-453431e6e193 h1:KklINKtMEJ51x1qY3Zs8WzjlgAyc/NutiErPEWRWYnE=
-github.com/defkoi/passgen v0.0.0-20260609202850-453431e6e193/go.mod h1:COqi4WVWiGRDrqqrnTLJlgGQyT72XRLHrvVtmGlMdE0=
+github.com/defkoi/passgen v0.0.0-20260611185849-dbe9d7d7a33a h1:L14bZtsrqdBp0Nqfp/RRIeGQrjAS6KFyfH65AqQhqv8=
+github.com/defkoi/passgen v0.0.0-20260611185849-dbe9d7d7a33a/go.mod h1:COqi4WVWiGRDrqqrnTLJlgGQyT72XRLHrvVtmGlMdE0=
+github.com/defkoi/passgen v0.0.0-20260613085311-dc7f7f47e656 h1:m/0Cw5tq5L8ZhGvzzHUyCRf3LIeeXCUu/hXN8IZR7/o=
+github.com/defkoi/passgen v0.0.0-20260613085311-dc7f7f47e656/go.mod h1:COqi4WVWiGRDrqqrnTLJlgGQyT72XRLHrvVtmGlMdE0=
+github.com/defkoi/passgen v0.0.0-20260613091051-9daf4b0aecc8 h1:Ybw0xDoWPv0Q2ondCTZI6waUcejETGZECOv0C6OAcCQ=
+github.com/defkoi/passgen v0.0.0-20260613091051-9daf4b0aecc8/go.mod h1:COqi4WVWiGRDrqqrnTLJlgGQyT72XRLHrvVtmGlMdE0=
 github.com/dlclark/regexp2/v2 v2.2.1 h1:mf4KkFUj0gJuarK8P+LgiS+Lit7m9N1yAwEfPbee7R0=
 github.com/dlclark/regexp2/v2 v2.2.1/go.mod h1:avUrQvPaLz2DrFNHJF0taWAFFX2C1GMSSoeiqFjcBmU=
 github.com/dop251/goja v0.0.0-20260607120635-348e6bea910d h1:xbM5U2EvWKkHxzEQJ2DEn20FwolWZahuTnVHr6WL3Q4=

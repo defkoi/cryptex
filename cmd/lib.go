@@ -39,6 +39,7 @@ var (
 	inputPassword string
 	iter          uint
 	genLen        int
+	genCharSet    string
 )
 
 func ParseFlags(args []string) {
@@ -84,6 +85,13 @@ func ParseFlags(args []string) {
 		"l",
 		defaultGenLen,
 		"generation length",
+	)
+
+	set.StringVar(
+		&genCharSet,
+		"cm",
+		"",
+		"generation charset modifier",
 	)
 
 	set.Parse(args)

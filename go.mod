@@ -3,7 +3,7 @@ module cryptex
 go 1.25.0
 
 require (
-	github.com/defkoi/passgen v0.0.0-20260609202850-453431e6e193
+	github.com/defkoi/passgen v0.0.0-20260613091051-9daf4b0aecc8
 	github.com/fatih/color v1.19.0
 	golang.org/x/term v0.42.0
 )

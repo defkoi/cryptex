@@ -13,6 +13,14 @@ func Gen() {
 		fatal(err)
 	}
 
+	if genCharSet != "" {
+		if cs, err := passgen.CharSetFromModifier(genCharSet); err != nil {
+			fatal(err)
+		} else {
+			passgen.SetCharSet(cs)
+		}
+	}
+
 	value, err := passgen.GeneratePassword(genLen)
 	if err != nil {
 		fatal(err)
